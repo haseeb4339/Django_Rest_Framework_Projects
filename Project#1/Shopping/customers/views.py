@@ -39,7 +39,7 @@ def customer_details(request, pk):
 
         customer = Customer.objects.get(id=pk)
 
-    except customer.DoesNotExist:
+    except Customer.DoesNotExist:
         return HttpResponse('not found!')
     
     if request.method == "GET":
