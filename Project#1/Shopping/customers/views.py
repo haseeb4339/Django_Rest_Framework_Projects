@@ -33,6 +33,8 @@ def custormer_list(request):
         return JsonResponse(serializer.errors, status = 400)
     
 
+
+@csrf_exempt
 def customer_details(request, pk):
 
     try:
@@ -47,3 +49,17 @@ def customer_details(request, pk):
         serializer = CustomerSerializer(customer)
 
         return JsonResponse(serializer.data)
+    
+    if request.method == "PUT":
+
+        data = JSONParser().parse(request)
+
+        serializer = CustomerSerializer(customer, data=data)
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return JsonResponse(serializer.data)
+        
+        return JsonResponse(serializer.errors, status=401)
