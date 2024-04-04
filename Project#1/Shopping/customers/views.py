@@ -6,8 +6,25 @@ from .serializers import CustomerSerializer
 
 def custormer_list(request):
 
-    customers = Customer.objects.all()
+    if request.method == "GET":
 
-    serializer = CustomerSerializer(customers, many=True)
 
-    return JsonResponse(serializer.data, safe=False)
+
+        customers = Customer.objects.all()
+
+        serializer = CustomerSerializer(customers, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+    
+    if request.method == "POST":
+
+        data = JSONParser().parse(request)
+        serializer = CustomerSerializer(data=data)
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return JsonResponse(serializer.data , status = 201)
+        
+        return JsonResponse(serializer.errors, status = 400)
