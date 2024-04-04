@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser
 from .models import Customer
 from .serializers import CustomerSerializer
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+
+from rest_framework.decorators import api_view
 
 
-@csrf_exempt
+@api_view(['GET', 'POST'])
 def custormer_list(request):
 
     if request.method == "GET":
@@ -17,24 +18,24 @@ def custormer_list(request):
 
         serializer = CustomerSerializer(customers, many=True)
 
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
     
     if request.method == "POST":
 
-        data = JSONParser().parse(request)
-        serializer = CustomerSerializer(data=data)
+        # data = JSONParser().parse(request)
+        serializer = CustomerSerializer(data=request.data)
 
         if serializer.is_valid():
 
             serializer.save()
 
-            return JsonResponse(serializer.data , status = 201)
+            return Response(serializer.data , status = 201)
         
-        return JsonResponse(serializer.errors, status = 400)
+        return Response(serializer.errors, status = 400)
     
 
 
-@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
 def customer_details(request, pk):
 
     try:
@@ -48,23 +49,23 @@ def customer_details(request, pk):
 
         serializer = CustomerSerializer(customer)
 
-        return JsonResponse(serializer.data)
+        return Response(serializer.data)
     
     if request.method == "PUT":
 
-        data = JSONParser().parse(request)
+        # data = JSONParser().parse(request)
 
-        serializer = CustomerSerializer(customer, data=data)
+        serializer = CustomerSerializer(customer, data=request.data)
 
         if serializer.is_valid():
 
             serializer.save()
 
-            return JsonResponse(serializer.data)
+            return Response(serializer.data)
         
-        return JsonResponse(serializer.errors, status=401)
+        return Response(serializer.errors, status=401)
     
     if request.method == "DELETE":
         customer.delete()
 
-        return HttpResponse("delete sucssfully", status=204)
+        return Response("delete sucssfully", status=204)
