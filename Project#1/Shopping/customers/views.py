@@ -63,3 +63,8 @@ def customer_details(request, pk):
             return JsonResponse(serializer.data)
         
         return JsonResponse(serializer.errors, status=401)
+    
+    if request.method == "DELETE":
+        customer.delete()
+
+        return HttpResponse("delete sucssfully", status=204)
