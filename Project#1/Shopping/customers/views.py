@@ -10,4 +10,4 @@ def custormer_list(request):
 
     serializer = CustomerSerializer(customers, many=True)
 
-    return JsonResponse(serializer.data)
+    return JsonResponse(serializer.data, safe=False)
