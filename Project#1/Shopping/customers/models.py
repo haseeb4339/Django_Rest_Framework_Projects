@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Customers(models.Model):
+class Customer(models.Model):
 
     name = models.CharField(max_length=100)
     age = models.IntegerField()
