@@ -81,43 +81,63 @@ class CustomerList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Gene
     
 
 
-class CustomerDetail(APIView):
-    def get_customer(self, pk):
-        try:
-            return Customer.objects.get(id=pk)
-        
-        except Customer.DoesNotExist:
-            raise Http404
-        
+class CustomerDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    queryset = Customer.objects.all()
+
+    serializer_class = CustomerSerializer
 
     def get(self, request, pk):
 
-        customer = self.get_customer(pk)
-
-        serializer = CustomerSerializer(customer)
-
-        return Response(serializer.data)
+        return self.retrieve(request)
     
 
     def put(self, request, pk):
 
-        customer = self.get_customer(pk)
-        serializer = CustomerSerializer(customer, data=request.data)
+        return self.update(request)
+    
+    def delete(self, request, pk):
 
-        if serializer.is_valid():
-            serializer.save()
+        return self.destroy(request)
 
-            return Response(serializer.data)
+
+# class CustomerDetail(APIView):
+#     def get_customer(self, pk):
+#         try:
+#             return Customer.objects.get(id=pk)
+        
+#         except Customer.DoesNotExist:
+#             raise Http404
         
 
-        return Response(serializer.errors, status = 400)
+#     def get(self, request, pk):
+
+#         customer = self.get_customer(pk)
+
+#         serializer = CustomerSerializer(customer)
+
+#         return Response(serializer.data)
     
 
-    def delete(self, request, pk):
-        customer = self.get_customer(pk)
-        customer.delete()
+#     def put(self, request, pk):
 
-        return Response("delete sucssfully", status=204)
+#         customer = self.get_customer(pk)
+#         serializer = CustomerSerializer(customer, data=request.data)
+
+#         if serializer.is_valid():
+#             serializer.save()
+
+#             return Response(serializer.data)
+        
+
+#         return Response(serializer.errors, status = 400)
+    
+
+#     def delete(self, request, pk):
+#         customer = self.get_customer(pk)
+#         customer.delete()
+
+#         return Response("delete sucssfully", status=204)
 
 
 
