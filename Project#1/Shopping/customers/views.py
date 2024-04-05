@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from django.http import Http404
 
 
 class CustomerList(APIView):
@@ -62,37 +63,79 @@ class CustomerList(APIView):
     
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def customer_details(request, pk):
+class CustomerDetail(APIView):
+    def get_customer(self, pk):
+        try:
+            return Customer.objects.get(id=pk)
+        
+        except Customer.DoesNotExist:
+            raise Http404
+        
 
-    try:
+    def get(self, request, pk):
 
-        customer = Customer.objects.get(id=pk)
-
-    except Customer.DoesNotExist:
-        return Response('not found!')
-    
-    if request.method == "GET":
+        customer = self.get_customer(pk)
 
         serializer = CustomerSerializer(customer)
 
         return Response(serializer.data)
     
-    if request.method == "PUT":
 
-        # data = JSONParser().parse(request)
+    def put(self, request, pk):
 
+        customer = self.get_customer(pk)
         serializer = CustomerSerializer(customer, data=request.data)
 
         if serializer.is_valid():
-
             serializer.save()
 
             return Response(serializer.data)
         
-        return Response(serializer.errors, status=401)
+
+        return Response(serializer.errors, status = 400)
     
-    if request.method == "DELETE":
+
+    def delete(self, request, pk):
+        customer = self.get_customer(pk)
         customer.delete()
 
         return Response("delete sucssfully", status=204)
+
+
+
+        
+
+# @api_view(['GET', 'PUT', 'DELETE'])
+# def customer_details(request, pk):
+
+#     try:
+
+#         customer = Customer.objects.get(id=pk)
+
+#     except Customer.DoesNotExist:
+#         return Response('not found!')
+    
+#     if request.method == "GET":
+
+#         serializer = CustomerSerializer(customer)
+
+#         return Response(serializer.data)
+    
+#     if request.method == "PUT":
+
+#         # data = JSONParser().parse(request)
+
+#         serializer = CustomerSerializer(customer, data=request.data)
+
+#         if serializer.is_valid():
+
+#             serializer.save()
+
+#             return Response(serializer.data)
+        
+#         return Response(serializer.errors, status=401)
+    
+#     if request.method == "DELETE":
+#         customer.delete()
+
+#         return Response("delete sucssfully", status=204)
