@@ -11,19 +11,30 @@ from django.http import Http404
 from rest_framework import mixins, generics
 
 
-class CustomerList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+
+class CustomerList(generics.ListCreateAPIView):
 
     queryset = Customer.objects.all()
 
     serializer_class = CustomerSerializer
 
-    def get(self, request):
 
-        return self.list(request)
+
+
+
+# class CustomerList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+
+#     queryset = Customer.objects.all()
+
+#     serializer_class = CustomerSerializer
+
+#     def get(self, request):
+
+#         return self.list(request)
     
-    def put(self, request):
+#     def put(self, request):
 
-        return self.create(request)
+#         return self.create(request)
 
 
 
@@ -80,8 +91,14 @@ class CustomerList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Gene
 #         return Response(serializer.errors, status = 400)
     
 
+class CustomerDetail(generics.RetrieveUpdateDestroyAPIView):
 
-class CustomerDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    queryset = Customer.objects.all()
+
+    serializer_class = CustomerSerializer
+
+
+# class CustomerDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
 
     queryset = Customer.objects.all()
 
